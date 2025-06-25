@@ -187,5 +187,3 @@ Verifique se:
 - Não há firewall bloqueando as conexões
 
 ---
-
-Desenvolvido com 💙 para integração com o sistema Paynet
