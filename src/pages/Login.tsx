@@ -163,21 +163,6 @@ const Login: React.FC = () => {
               </div>
             </CardContent>
           </Card>
-
-          {/* Connection Status */}
-          <Card className="mt-6 border-primary/20 bg-primary/5">
-            <CardContent className="p-4">
-              <h3 className="text-sm font-medium text-foreground mb-2">
-                Conexão com Backend
-              </h3>
-              <p className="text-xs text-muted-foreground">
-                Certifique-se de que o servidor NestJS está rodando em{" "}
-                <code className="bg-muted px-1 py-0.5 rounded text-xs">
-                  {import.meta.env.VITE_API_URL || "http://localhost:3000"}
-                </code>
-              </p>
-            </CardContent>
-          </Card>
         </div>
       </div>
     </div>

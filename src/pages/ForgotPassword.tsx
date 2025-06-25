@@ -139,14 +139,6 @@ const ForgotPassword: React.FC = () => {
                 </Alert>
               )}
 
-              <div className="mb-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                <p className="text-sm text-blue-800">
-                  <strong>Nota:</strong> Este é um sistema de demonstração. Na
-                  versão de produção, um e-mail real seria enviado com
-                  instruções para redefinir sua senha.
-                </p>
-              </div>
-
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div>
                   <Label htmlFor="email" className="flex items-center">

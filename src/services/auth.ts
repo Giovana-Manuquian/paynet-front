@@ -33,6 +33,16 @@ export interface AuthResponse {
   access_token: string;
 }
 
+function mapUser(rawUser: any): User {
+  return {
+    id: rawUser.id || rawUser._id,
+    email: rawUser.email,
+    fullName: rawUser.nome || rawUser.fullName || "",
+    createdAt: rawUser.createdAt,
+  };
+}
+
+
 export class AuthError extends Error {
   constructor(
     message: string,
@@ -103,26 +113,24 @@ export const authService = {
     }
   },
 
-  async verifyToken(token: string): Promise<User | null> {
-    try {
-      // Temporarily store token to make the request
-      const currentToken = localStorage.getItem("auth_token");
-      localStorage.setItem("auth_token", token);
+ async verifyToken(token: string): Promise<User | null> {
+  try {
+    const currentToken = localStorage.getItem("auth_token");
+    localStorage.setItem("auth_token", token);
 
-      const user = await apiClient.get<User>(config.endpoints.auth.profile);
+    const rawUser = await apiClient.get<any>(config.endpoints.auth.profile);
 
-      // Restore previous token
-      if (currentToken) {
-        localStorage.setItem("auth_token", currentToken);
-      } else {
-        localStorage.removeItem("auth_token");
-      }
-
-      return user;
-    } catch {
-      return null;
+    if (currentToken) {
+      localStorage.setItem("auth_token", currentToken);
+    } else {
+      localStorage.removeItem("auth_token");
     }
-  },
+
+    return mapUser(rawUser);
+  } catch {
+    return null;
+  }
+},
 
   async refreshToken(): Promise<AuthResponse> {
     try {

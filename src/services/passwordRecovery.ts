@@ -32,12 +32,14 @@ export const passwordRecoveryService = {
 
   async verifyResetToken(token: string): Promise<boolean> {
     try {
-      await apiClient.post("/auth/verify-reset-token", { token });
+      // GET com token como query param
+      await apiClient.get(`/auth/verify-reset-token?token=${encodeURIComponent(token)}`);
       return true;
     } catch (error) {
       return false;
     }
   },
+
 
   async resetPassword(data: ResetPasswordData): Promise<void> {
     if (data.newPassword !== data.confirmPassword) {
@@ -50,6 +52,7 @@ export const passwordRecoveryService = {
       await apiClient.post("/auth/reset-password", {
         token: data.token,
         newPassword: data.newPassword,
+        confirmPassword: data.confirmPassword, // <-- Adicionado aqui!
       });
     } catch (error) {
       if (error instanceof ApiClientError) {

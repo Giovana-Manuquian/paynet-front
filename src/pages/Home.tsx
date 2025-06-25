@@ -47,8 +47,13 @@ const Home: React.FC = () => {
       .slice(0, 2);
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("pt-BR", {
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return "Data não disponível";
+
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return "Data inválida";
+
+    return date.toLocaleDateString("pt-BR", {
       year: "numeric",
       month: "long",
       day: "numeric",
@@ -88,7 +93,7 @@ const Home: React.FC = () => {
       setLoading(true);
       const searchResults: UsersListResponse =
         await usersService.searchUsers(searchQuery);
-      setUsers(searchResults.users ?? []); // Protege contra undefined
+      setUsers(searchResults.users ?? []);
       // console.log("searchResults response:", searchResults.users);
     } catch (err: any) {
       toast.error("Erro ao buscar usuários");
@@ -145,11 +150,11 @@ const Home: React.FC = () => {
                 </p>
                 <p className="text-xs text-muted-foreground">{user?.email}</p>
               </div>
-              <Avatar>
+              {/* <Avatar>
                 <AvatarFallback className="bg-primary text-primary-foreground">
                   {user?.fullName ? getInitials(user.fullName) : "U"}
                 </AvatarFallback>
-              </Avatar>
+              </Avatar> */}
               <Button variant="outline" size="sm" onClick={handleLogout}>
                 <LogOut className="w-4 h-4 mr-2" />
                 Sair
@@ -164,10 +169,7 @@ const Home: React.FC = () => {
         <div className="max-w-6xl mx-auto">
           {/* Welcome Section */}
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-foreground mb-2">
-              Bem-vindo, {user?.fullName?.split(" ")[0]}! 👋
-            </h2>
-            <p className="text-muted-foreground">
+            <p className="text-muted-foreground text-lg">
               Gerencie usuários e acompanhe o sistema de autenticação.
             </p>
           </div>
@@ -302,41 +304,44 @@ const Home: React.FC = () => {
                 </div>
               ) : (
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {filteredUsers.map((userItem) => (
-                    <Card
-                      key={userItem.id}
-                      className="border border-slate-200/60"
-                    >
-                      <CardContent className="p-4">
-                        <div className="flex items-start space-x-3">
-                          <Avatar className="w-10 h-10">
-                            <AvatarFallback className="bg-primary/10 text-primary">
-                              {getInitials(userItem.fullName)}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="flex-1 min-w-0">
-                            <h4 className="font-semibold text-foreground truncate">
-                              {userItem.fullName}
-                            </h4>
-                            <p className="text-sm text-muted-foreground truncate">
-                              {userItem.email}
-                            </p>
-                            <div className="flex items-center mt-2 text-xs text-muted-foreground">
-                              <Calendar className="w-3 h-3 mr-1" />
-                              {formatDate(userItem.createdAt)}
-                            </div>
-                            {userItem.address && (
-                              <div className="flex items-center mt-1 text-xs text-muted-foreground">
-                                <MapPin className="w-3 h-3 mr-1" />
-                                {userItem.address.city},{" "}
-                                {userItem.address.state}
+                  {filteredUsers.map((userItem) => {
+                    console.log("createdAt do usuário:", userItem.createdAt);
+                    return (
+                      <Card
+                        key={userItem.id}
+                        className="border border-slate-200/60"
+                      >
+                        <CardContent className="p-4">
+                          <div className="flex items-start space-x-3">
+                            <Avatar className="w-10 h-10">
+                              <AvatarFallback className="bg-primary/10 text-primary">
+                                {getInitials(userItem.fullName)}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className="flex-1 min-w-0">
+                              <h4 className="font-semibold text-foreground truncate">
+                                {userItem.fullName}
+                              </h4>
+                              <p className="text-sm text-muted-foreground truncate">
+                                {userItem.email}
+                              </p>
+                              <div className="flex items-center mt-2 text-xs text-muted-foreground">
+                                <Calendar className="w-3 h-3 mr-1" />
+                                {formatDate(userItem.createdAt)}
                               </div>
-                            )}
+                              {userItem.address && (
+                                <div className="flex items-center mt-1 text-xs text-muted-foreground">
+                                  <MapPin className="w-3 h-3 mr-1" />
+                                  {userItem.address.city},{" "}
+                                  {userItem.address.state}
+                                </div>
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
                 </div>
               )}
             </CardContent>
